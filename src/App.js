@@ -1,6 +1,6 @@
 import "./App.css";
 
-import { useMemo, useRef } from "react";
+import { useMemo } from "react";
 import * as am5 from '@amcharts/amcharts5';
 import * as am5Flow from '@amcharts/amcharts5/flow';
 
@@ -19,7 +19,6 @@ client.config.configureEditorPanel([
 function App() {
   const config = useConfig();
   const sigmaData = useElementData(config.source);
-  const ref = useRef();
 
   const options = useMemo(() => {
     const dimensions = config.dimension;
