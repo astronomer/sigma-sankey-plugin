@@ -1,7 +1,7 @@
 {
   "name": "sankey",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
   "dependencies": {
     "@amcharts/amcharts5": "^5.2.0",
     "@sigmacomputing/plugin": "^0.6.54",
