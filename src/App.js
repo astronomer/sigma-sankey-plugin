@@ -56,7 +56,7 @@ function App() {
     const hardcodedColors = [
       {id: "Opp Created", fill: 0xD8D4D5},
       {id: "Stage 2", fill: 0xC89933},
-      {id: "Stage 2, Trial", fill: 0xC89933},
+      // {id: "Stage 2, Trial", fill: 0xC89933},
       {id: "No Stage 2", fill: 0xDB6C79},
       {id: "No Stage 2, No Trial", fill: 0xDB6C79},
       {id: "Won, Astro Deployed", fill: 0x1B9D51},
@@ -100,7 +100,7 @@ function App() {
       const data = target._dataItem;
       if (data.dataContext) {
         const {id} = data.dataContext;
-        const found = hardcodedColors.filter(el => el.id == id)[0];
+        const found = hardcodedColors.filter(el => el.id === id)[0];
         return found ? am5.color(found.fill) : fill;
       }
 
@@ -128,7 +128,6 @@ function App() {
       if (link && link.dataContext) {
         const { from } = link.dataContext;
         const found = hardcodedColors.filter(el => el.id === from)[0];
-
         return found ? am5.color(found.fill) : fill;
       }
       return fill;
