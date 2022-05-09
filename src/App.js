@@ -53,6 +53,14 @@ function App() {
   }, [config, sigmaData]);
 
   useLayoutEffect(() => {
+    const hardcodedColors = [
+      {id: "Opp Created", fill: 0xD8D4D5},
+      {id: "Stage 2", fill: 0xC89933},
+      {id: "Stage 2, Trial", fill: 0xC89933},
+      {id: "No Stage 2", fill: 0xDB6C79},
+      {id: "No Stage 2, No Trial", fill: 0xDB6C79},
+      {id: "Won, Astro Deployed", fill: 0x1B9D51},
+    ];
     let root = am5.Root.new("chartdiv");
     let series = root.container.children.push(
       am5Flow.Sankey.new(root, {
@@ -74,6 +82,7 @@ function App() {
       controlPointDistance: 0,
     });
   
+    // tooltip adapter
     series.nodes.rectangles.template.adapters.add('tooltipText', function(tooltipText, target) {
       const links = target.dataItem._settings.incomingLinks || [];
       let toolTip = "";
@@ -86,34 +95,44 @@ function App() {
       return toolTip;
     });
 
-    // todo: see if sigma plugin can do inputs for custom colors and id's
-    series.nodes.data.setAll([
-      {id: "Opp Created", name: "Opp Created", fill: am5.color(0xD8D4D5)},
-      {id: "Stage 2", name: "Stage 2", fill: am5.color(0xC89933)},
-      {id: "Stage 2, Trial", name: "Stage 2, Trial", fill: am5.color(0xC89933)},
-      {id: "No Stage 2", name: "No Stage 2", fill: am5.color(0xDB6C79)},
-      // {id: "No Stage 2, No Trial", name: "No Stage 2, No Trial", fill: am5.color(0xDB6C79)},
-      // {id: "Won, Astro Deployed", name: "Won, Astro Deployed", fill: am5.color(0x1B9D51)},
-    ]);
+    // node adapter custom fill logic based on id
+    series.nodes.rectangles.template.adapters.add('fill', function (fill, target) {
+      const data = target._dataItem;
+      if (data.dataContext) {
+        const {id} = data.dataContext;
+        const found = hardcodedColors.filter(el => el.id == id)[0];
+        return found ? am5.color(found.fill) : fill;
+      }
 
-    // series.nodes.labels.template.adapters.add('label', function(label, target, key) {
-    //   const nodes = target;
-    //   console.log(nodes);
-    //   console.log(label);
-    // });
-    
-    
-    
-    // console.log();
+      return fill;
+    });
 
-    // series.nodes.labels.each((node) => {
-    //   console.log(node);
-    // })
+    // node label custom text - root node different count than children nodes
+    series.nodes.labels.template.adapters.add('text', function(label, target) {
+      const node = target._dataItem;
+      if (node && node._settings) {
+        const nodeSettings = node._settings;
+        const { name } = nodeSettings;
 
+        if (nodeSettings.incomingLinks) {
+          return `${name}: ${nodeSettings.sumIncoming}`;
+        } else if (nodeSettings.outgoingLinks) {
+          return `${name}: ${nodeSettings.sumOutgoing}`;
+        }
+      }
+    });
 
-    // series.nodes.labels.template.setAll({
-    //   text: `[bold]{name}: {sumIncoming}`
-    // });
+    // link adapter for custom fill based on id
+    series.links.template.adapters.add('fill', function(fill, target) {
+      const link = target._dataItem;
+      if (link && link.dataContext) {
+        const { from } = link.dataContext;
+        const found = hardcodedColors.filter(el => el.id === from)[0];
+
+        return found ? am5.color(found.fill) : fill;
+      }
+      return fill;
+    });
   
     if (options && options.length > 0) {
       series.data.setAll(options);
