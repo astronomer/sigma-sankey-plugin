@@ -93,12 +93,27 @@ function App() {
       {id: "Stage 2, Trial", name: "Stage 2, Trial", fill: am5.color(0xC89933)},
       {id: "No Stage 2", name: "No Stage 2", fill: am5.color(0xDB6C79)},
       // {id: "No Stage 2, No Trial", name: "No Stage 2, No Trial", fill: am5.color(0xDB6C79)},
-      {id: "Won, Astro Deployed", name: "Won, Astro Deployed", fill: am5.color(0x1B9D51)},
+      // {id: "Won, Astro Deployed", name: "Won, Astro Deployed", fill: am5.color(0x1B9D51)},
     ]);
-  
-    series.nodes.labels.template.setAll({
-      text: `[bold]{name}: {sumIncoming}`
-    });
+
+    // series.nodes.labels.template.adapters.add('label', function(label, target, key) {
+    //   const nodes = target;
+    //   console.log(nodes);
+    //   console.log(label);
+    // });
+    
+    
+    
+    // console.log();
+
+    // series.nodes.labels.each((node) => {
+    //   console.log(node);
+    // })
+
+
+    // series.nodes.labels.template.setAll({
+    //   text: `[bold]{name}: {sumIncoming}`
+    // });
   
     if (options && options.length > 0) {
       series.data.setAll(options);
