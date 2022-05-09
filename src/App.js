@@ -14,6 +14,7 @@ client.config.configureEditorPanel([
   { name: "source", type: "element" },
   { name: "dimension", type: "column", source: "source", allowMultiple: true },
   { name: "measures", type: "column", source: "source", allowMultiple: true },
+  { name: "custom", type: "text", secure: false, multiline: true, placeholder: "ex: \n node name, #hexColor \n node name2, #hexColor2"},
 ]);
 
 function App() {
@@ -53,14 +54,31 @@ function App() {
   }, [config, sigmaData]);
 
   useLayoutEffect(() => {
-    const hardcodedColors = [
-      {id: "Opp Created", fill: 0xD8D4D5},
-      {id: "Stage 2", fill: 0xC89933},
-      {id: "Stage 2, Trial", fill: 0xC89933},
-      {id: "No Stage 2", fill: 0xDB6C79},
-      {id: "No Stage 2, No Trial", fill: 0xDB6C79},
-      {id: "Won, Astro Deployed", fill: 0x1B9D51},
+    // hardcoded colors
+    const customColors = [
+      {id: "opp created", fill: 0xD8D4D5},
+      {id: "stage 2", fill: 0xC89933},
+      {id: "stage 2, trial", fill: 0xC89933},
+      {id: "no Stage 2", fill: 0xDB6C79},
+      {id: "no Stage 2, no trial", fill: 0xDB6C79},
+      {id: "won, astro deployed", fill: 0x1B9D51},
     ];
+
+    const custom = config.custom;
+    if (custom) {
+      custom.split("\n").forEach((setting) => {
+        const [name, color] = setting.split(',');
+        if (name.trim() !== "") {
+          const found = customColors.findIndex(el => el.id === name.trim());
+          if (found >= 0) {
+            customColors[found].fill = color.trim();
+          } else {
+            customColors.push({ id: name.trim(), fill: `${color.trim()}`});
+          }
+        }
+      });
+    }
+
     let root = am5.Root.new("chartdiv");
     let series = root.container.children.push(
       am5Flow.Sankey.new(root, {
@@ -99,8 +117,8 @@ function App() {
     series.nodes.rectangles.template.adapters.add('fill', function (fill, target) {
       const data = target._dataItem;
       if (data.dataContext) {
-        const {id} = data.dataContext;
-        const found = hardcodedColors.filter(el => el.id === id)[0];
+        const { id } = data.dataContext;
+        const found = customColors.filter(el => el.id.toLowerCase() === id.toLowerCase())[0];
         return found ? am5.color(found.fill) : fill;
       }
 
@@ -127,7 +145,7 @@ function App() {
       const link = target._dataItem;
       if (link && link.dataContext) {
         const { from } = link.dataContext;
-        const found = hardcodedColors.filter(el => el.id === from)[0];
+        const found = customColors.filter(el => el.id.toLowerCase() === from.toLowerCase())[0];
         return found ? am5.color(found.fill) : fill;
       }
       return fill;
@@ -143,7 +161,7 @@ function App() {
     series.appear(1000, 500);
 
     return () => {root.dispose()}
-  }, [options])
+  }, [options, config]);
 
   return (
     <div id="chartdiv" style={{ width: "100%", height: "100vh"}}></div>
