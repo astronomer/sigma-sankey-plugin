@@ -15,6 +15,8 @@ client.config.configureEditorPanel([
   { name: "dimension", type: "column", source: "source", allowMultiple: true },
   { name: "measures", type: "column", source: "source", allowMultiple: true },
   { name: "custom", type: "text", secure: false, multiline: true, placeholder: "ex: \n node name, #hexColor \n node name2, #hexColor2"},
+  { name: "opacity", type: "text", secure: false, multiline: false, placeholder: "A value between 0 and 1. Default: 0.55 "},
+  { name: "linkTension", type: "text", secure: false, multiline: false, placeholder: "A value between 0 and 1. Default: 0"},
 ]);
 
 function App() {
@@ -55,6 +57,9 @@ function App() {
 
   useLayoutEffect(() => {
     // hardcoded colors
+    const customOpacity = config.opacity;
+    const customLinkTension = config.linkTension;
+
     const customColors = [
       {id: "opp created", fill: 0xD8D4D5},
       {id: "stage 2", fill: 0xC89933},
@@ -89,13 +94,13 @@ function App() {
         nodeAlign: 'left',
         nodePadding: 100,
         nodeWidth: 10,
-        linkTension: 0,
+        linkTension: customLinkTension || 0,
         idField: "id",
       })
     );
   
     series.links.template.setAll({
-      fillOpacity: 0.55,
+      fillOpacity: customOpacity.trim() || 0.55,
       fillStyle: "source",
       controlPointDistance: 0,
     });
