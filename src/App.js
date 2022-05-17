@@ -100,7 +100,7 @@ function App() {
     );
   
     series.links.template.setAll({
-      fillOpacity: customOpacity.trim() || 0.55,
+      fillOpacity: customOpacity || 0.55,
       fillStyle: "source",
       controlPointDistance: 0,
     });
